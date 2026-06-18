@@ -1,0 +1,13 @@
+image: node:18
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Deploy to Railway
+          deployment: production
+          caches:
+            - node
+          script:
+            - npm install -g @railway/cli
+            - RAILWAY_TOKEN=$RAILWAY_TOKEN railway up --service=$RAILWAY_SERVICE
