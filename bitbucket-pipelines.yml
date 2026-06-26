@@ -1,5 +1,4 @@
 image: node:18
-
 pipelines:
   branches:
     main:
