@@ -1,12 +1,8 @@
 import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for
-
 app = Flask(__name__)
-
 DB_NAME = "tasks.db"
-
-
 def init_db():
     """Create the tasks table if it doesn't exist."""
     conn = sqlite3.connect(DB_NAME)
@@ -20,22 +16,16 @@ def init_db():
     """)
     conn.commit()
     conn.close()
-
-
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     return conn
-
-
 @app.route("/")
 def index():
     conn = get_db_connection()
     tasks = conn.execute("SELECT * FROM tasks ORDER BY id DESC").fetchall()
     conn.close()
     return render_template("index.html", tasks=tasks)
-
-
 @app.route("/add", methods=["POST"])
 def add_task():
     title = request.form.get("title")
@@ -45,8 +35,6 @@ def add_task():
         conn.commit()
         conn.close()
     return redirect(url_for("index"))
-
-
 @app.route("/complete/<int:task_id>")
 def complete_task(task_id):
     conn = get_db_connection()
@@ -54,8 +42,6 @@ def complete_task(task_id):
     conn.commit()
     conn.close()
     return redirect(url_for("index"))
-
-
 @app.route("/delete/<int:task_id>")
 def delete_task(task_id):
     conn = get_db_connection()
@@ -63,14 +49,10 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
     return redirect(url_for("index"))
-
-
 @app.route("/health")
 def health():
     """Simple health check endpoint - useful for Railway to verify the app is alive."""
     return {"status": "ok"}
-
-
 if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", 5000))
